@@ -1,68 +1,566 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title><%=title%></title>
-        <script type="text/javascript" src="/../public/js/jquery-1.10.2.min.js"></script>
-        <link rel="stylesheet" href="/../public/css/style.css">
-    </head>
-<body>
-<div class="page-data">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-    <form method="post" action="" id="the-form">
-        <table cellpadding="11">
-        <tr>
-            <td class="label">Numero Contraloria:</td><td>: <input type="text" name="id_bien"></td>
-         </tr>
-         <tr>
-             <td class="label">Nueva Area:</td><td>: <input type="text" name="id_area"></td>
-          </tr>
-         <tr>
-            <td class="label"></td>
-            <td>
-                &nbsp; <input type="button" value="Tramitar" onClick="crearTramite()">
-            </td>
-         </tr>
-        </table>
-        <p>
-    </form>
-</div>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%=title%></title>
+
+    <script src="bower_components/gentelella/vendors/jquery/dist/jquery.min.js"></script>
+    <link href="bower_components/gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="bower_components/gentelella/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="bower_components/gentelella/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <link href="bower_components/gentelella/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
+    <link href="bower_components/gentelella/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
+    <link href="bower_components/gentelella/vendors/switchery/dist/switchery.min.css" rel="stylesheet">
+    <link href="bower_components/gentelella/vendors/starrr/dist/starrr.css" rel="stylesheet">
+    <link href="bower_components/gentelella/build/css/custom.min.css" rel="stylesheet">
+  </head>
+
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="/" class="site_title"><i class="fa fa-calculator"></i> <span>SIIA</span></a>
+            </div>
+
+            <div class="clearfix"></div>
+            <br/>
+
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <ul class="nav side-menu">
+                  <li><a href="/"><i class="fa fa-home"></i> Inicio</a></li>
+                  <li><a href="/bajas"><i class="fa fa-arrow-down"></i> Baja</a></li>
+                  <li><a href="/Transferencias"><i class="fa fa-long-arrow-right"></i> Transferencia</a></li>
+                  <li><a href="/donaciones"><i class="fa fa-birthday-cake"></i> Donacion</a></li>
+                  <li><a href="/peticiones"><i class="fa fa-long-arrow-left"></i> Petición</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav class="" role="navigation">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <%=user%> <!-- AQUI VA QUE USUARIO ESTA MANDADO POR EJS -->
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="/login"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión </a></li>
+                  </ul>
+                </li>
+
+                <li role="presentation" class="dropdown">
+                  <a href="/notificaciones" class="dropdown-toggle info-number" aria-expanded="false">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="badge bg-green">*</span>
+                  </a>
+                  <!-- AQUI VAMOS A RELLENAR ESAS COSAS CON NOTIFICACIONES OBTENIDAS DE LA BD -->
+                  <ul id="notificaciones" class="dropdown-menu list-unstyled msg_list" role="menu">
+
+                  </ul>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3><%=title%></h3>
+              </div>
+
+            </div>
+            <div class="clearfix"></div>
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_content">
+                    <br />
+                    <form id="formulario" data-parsley-validate class="form-horizontal form-label-left">
+
+                      <div class="form-group">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Buscar bienes por:<span class="required"></span></label>
+                        <div class="col-md-9 col-sm-9 col-xs-12">
+                        <div class="radio">
+                            <label>
+                              <input type="radio" checked="" value="Área" id="opcArea" name="optionsRadios"> Área
+                            </label>
+                          </div>
+                          <div class="radio">
+                            <label>
+                              <input type="radio" value="Número de contraloria" id="opcNumContraloria" name="optionsRadios"> Número de contraloria
+                            </label>
+                          </div>
+                          <div class="radio">
+                            <label>
+                              <input type="radio" value="Número de serie" id="opcNumSerie" name="optionsRadios"> Número de serie
+                            </label>
+                          </div>
+                        </div>
+
+                        <br><br><br><br><br><br>
+                        <div id="form_busquedaArea">
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Responsable<span class="required"></span></label>
+                          
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <select id="selectResponsable" class="form-control">
+                                <option>Seleccionar...</option>
+                            </select>
+                          </div>
+
+                          <br><br><br>
+
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Área<span class="required"></span></label>
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <select id="selectArea" class="form-control" disabled="disabled">
+                              <option>Seleccionar...</option>
+                            </select>
+                          </div>
+
+                          <br><br><br>
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Nueva área a asignar<span class="required"></span></label>
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <select id="selectNewArea" class="form-control">
+                              <option>Seleccionar...</option>
+                            </select>
+                          </div>
+                          
+                          <div align="center">
+                            <input type="button" id="getInfo" value="Cargar información" class="btn btn-primary">
+                          </div>
+                        </div>
+                        <div id="form_numeroCS">
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" id="label_numContr"for="first-name">Número de contraloria<span class="required"></span></label>
+                          <label class="control-label col-md-3 col-sm-3 col-xs-12" id="label_numSerie"for="first-name">Número de serie<span class="required"></span></label>
+                          <div class="col-md-6 col-sm-6 col-xs-12">
+                            <input type="text" id="numero" required="required" class="form-control col-md-7 col-xs-12">
+                          </div>
+                        </div>
+                          <br><br><br>
+                      </div>
+                      <div class="ln_solid"></div>
+
+                      <div class="x_panel">
+                        <div class="x_title">
+                          <h2>Listado de bienes</h2>
+                          <div class="clearfix"></div>
+                        </div>
+
+                        <div class="x_content">
+                          <div class="table-responsive">
+                            <table id="bienes" class="table table-striped jambo_table bulk_action">
+                              <thead>
+                                <tr class="headings">
+                                  <th>
+                                    <input type="checkbox" id="check-all" class="flat">
+                                  </th>
+                                  <th class="column-title">Clave única</th>
+                                  <th class="column-title">Descripción</th>
+                                  <th class="column-title"># de Serie</th>
+                                  </th>
+                                  <th class="bulk-actions" colspan="7">
+
+                                  </th>
+                                </tr>
+                              </thead>
+
+                              <!-- se va a llenar con un reload y lo que se agarre del backend, los bienes -->
+
+                              <tbody>
+
+                              </tbody>
+                            </table>
+                          <div class="clearfix"></div>
+
+                        </div>
+                      </div>
+
+                    </form>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="motivos">Motivo <span class="required"></span>
+                      </label>
+                      <textarea form ="form" required="required" class="form-control col-md-7 col-xs-12" name="Motivo" id="motivo" cols="35" wrap="soft"></textarea>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <div align="right">
+                        <input type="button" value="Guardar" onClick="checarTabla(true)" class="btn btn-primary">
+                        <input type="button" value="Tramitar" onClick="checarTabla(false)" class="btn btn-primary">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            Universidad de Sonora
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+
+    </div>
+
+    
+
+    <script>
+    
+    var bienes = [];
+      var areaNueva = 2; //BODEGA
+      function getBienes(tipo, parametro) {
+        if(parametro == "Seleccionar..."){
+              return;
+          }
+        $.ajax({
+          url:"/api/bien/",
+          type:"get",
+          data:"tipoBusqueda="+tipo+"&parametro="+parametro,
+          success:function(res){
+              bienes = []
+              $("#bienes tbody").empty();
+              if(!res){
+                alert('Área no existe o no dispone de bienes.')
+                jQuery("#parametro").val('');
+              }else for (var i = 0; i < res.data.length; i++) {
+
+                bienes.push(res.data[i]);
+                var id = "renglon"+i;
+                var id_check = "check"+i;
+                $('#bienes tbody').append("<tr id="+id+" class='even pointer'>"+"<td class=a-center ><input id="+id_check+" type=checkbox class=check name=table_records></td>"+"<td class='numeroContraloria'>" + res.data[i].numeroContraloria + "</td><td class='descripcion'>" + res.data[i].nombre+" "+res.data[i].descripcion + "</td><td class='numeroSerie'>" + res.data[i].numeroSerie + "</td></tr>");
+              }
+              //window.location.reload();
+              console.log(bienes)
+              return false;
+          },
+          error:function(xhr, status, error){
+
+              console.log(xhr.responseText);
+              var err = '';
+              $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                   err +='<li>'+item.msg+'</li>';
+              });
+              $(".err-area").html(err);
+              return false;
+          }
+        });
+      }
+
+      function checarTabla(guardar) {
+        if($('#motivo').val() == ''){
+          alert("Favor de ingresar un motivo.");
+          return;
+        }
+        var arrayOfValues = []
+        var bienesATramitar = []
+        var tableControl = document.getElementById('bienes');
+        $('input:checkbox:checked', tableControl).each(function() {
+            arrayOfValues.push($(this).closest('tr').find('td.numeroContraloria').text());
+        }).get();
+        if(!guardar){
+          if(arrayOfValues.length == 0){
+            alert("Favor de seleccionar algún bien para el trámite");
+            return;
+          }
+          if (confirm('¿Está seguro que desea TRANSFERIR los bienes seleccionados? \nFavor de verificar los datos')) {
+            for (var i = 0; i < arrayOfValues.length; i++) {
+              bienesATramitar.push(_.find(bienes,function(bien){ return bien.numeroContraloria == arrayOfValues[i]}));
+            }
+              console.log("BIENES", bienesATramitar);
+              crearTramite(bienesATramitar,arrayOfValues[i],guardar)
+          } else {
+            $("#bienes tbody").empty();
+            $("#motivo").val('')
+          }
+        }else {
+          if(arrayOfValues.length == 0){
+            alert("Favor de seleccionar algún bien para el trámite");
+            return;
+          }
+          for (var i = 0; i < arrayOfValues.length; i++) {
+            bienesATramitar.push(_.find(bienes,function(bien){ return bien.numeroContraloria == arrayOfValues[i]}));
+          }
+            alert(""+bienesATramitar)
+            console.log("BIENES", bienesATramitar);
+            crearTramite(bienesATramitar,arrayOfValues[i],guardar)
+        }
+
+      }
+
+      function crearTramite(bieness,numeroContraloria, guardar) {
+        var estado="Activo";
+        var tramite_id;
+        console.log
+        guardar ? estado = "Guardado" : estado = "Activo";
+        // console.log(id_bien);
+        var dat = {
+          'bienes': bieness,
+          'numeroContraloria': numeroContraloria,
+          'tipo': "Transferencia",
+          'estado': estado,
+          'id_area': jQuery('#selectNewArea').val(),
+          'motivo': jQuery('#motivo').val()
+        }
+        $.ajax({
+         url:"/api/Tramite/",
+         type:"post",
+         data:{datos: dat},
+         dataType: 'json',
+         success:function(res){
+            tramite_id = res.id;
+            var user = "<%=user%>";
+            if(estado=="Activo"){
+              $.ajax({
+                url:"api/notificaciones",
+                type:"post",
+                data:"emisor="+user+"id_tramite="+tramite_id+"&tipo=Nuevo Tramite&mensaje=Se ha generado un nuevo tramite, favor de revisarlo&destinatario=1",
+                success:function(res) {
+                    window.location.reload();
+                    alert("Trámite enviado al Jefe de Departamento para su revisión.")
+                    return false;
+                },
+                error:function(xhr, status, error){
+
+                    console.log(xhr.responseText);
+                    var err = '';
+                    $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                         err +='<li>'+item.msg+'</li>';
+                    });
+                    $(".err-area").html(err);
+                    return false;
+                }
+
+              });
+            }else{
+              alert("trámite guardado.");
+              window.location.reload();
+            }
+            
+             return false;
+         },
+         error:function(xhr, status, error){
+
+             console.log(xhr.responseText);
+             var err = '';
+             $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                  err +='<li>'+item.msg+'</li>';
+             });
+             $(".err-area").html(err);
+             return false;
+         }
+
+        });
+
+      }
+    </script>
+    <script src="js/jquery.tablesorter.pager.js"></script>
+    <script>
+      $.ajax({
+        url:"/api/responsable/",
+        type:"get",
+        data:"",
+        success:function(res){
+            //window.location.reload();
+              $.each(res.data, function (i, item) {
+                if(item.nombre != "" && item.nombre != "Gerente Bodega" && item.nombre != "Gerente Almacen")
+                $('#selectResponsable').append($('<option>', { 
+                    value: item.id_responsable,
+                    text : item.nombre 
+                }));
+            });
+            return false;
+        },
+        error:function(xhr, status, error){
+
+            console.log(xhr.responseText);
+            var err = '';
+            $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                 err +='<li>'+item.msg+'</li>';
+            });
+            $(".err-area").html(err);
+            return false;
+        }
+      });
+
+      $.ajax({
+            url:"/api/area",
+            type:"get",
+            data:"",
+            success:function(res){
+                //window.location.reload();
+                  $.each(res.data, function (i, item) {
+                    $('#selectNewArea').append($('<option>', { 
+                        value: item.id_area,
+                        text : item.habitacion + " " + item.ubicacion 
+                    }));
+                });
+                $("#selectNewArea").prop("disabled", false);
+                return false;
+            },
+            error:function(xhr, status, error){
+
+                console.log(xhr.responseText);
+                var err = '';
+                $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                    err +='<li>'+item.msg+'</li>';
+                });
+                $(".err-area").html(err);
+                return false;
+            }
+        });
+      
 
 
-<div class="page-data">
-     <ul class="err-area"></ul>
-</div>
+      // Do not miss the `event` object if you want to use it
+      $('#bienes').on('click', 'input[type="checkbox"]', function() {
+          console.log($('#bienes').index())
+          
+          console.log($(this).closest('tr').children('td.numeroContraloria').text());
+          var num = $(this).closest('tr').children('td.numeroContraloria').text();
+          for(var i = 0; i<bienes.length;++i){
+            if(bienes[i].numeroContraloria == num){
+              if(bienes[i].enTramite){ 
+                bienes[i].enTramite = false;
+                // TODO QUITAR A LISTA DE BIENES A TRAMITAR
+                $(this).closest('tr').css("background-color", "#FFFFFF");
+                //$('#bienesATramitar').remove('.bien'+bienes[i].id_bien);
+              }
+              else {
+                $(this).closest('tr').css("background-color", "#B2DFDB");
+                bienes[i].enTramite = true;
+                //$('#bienesATramitar').append('<p id="bien'+bienes[i].id_bien+'">'+bienes[i].nombre+" "+bienes[i].descripcion+'</p>');
+              }
+              //alert(""+bienes[i].enTramite)
+            }
+          }
+      })
+      
 
-<script>
+      $('#selectResponsable').on('change', function() {
+        console.log($(this).val());
+          $.ajax({
+            url:"/api/area/",
+            type:"get",
+            data:"id_responsable="+$(this).val(),
+            success:function(res){
+                //window.location.reload();
+                  $.each(res.data, function (i, item) {
+                    $('#selectArea').append($('<option>', { 
+                        value: item.id_area,
+                        text : item.habitacion + " " + item.ubicacion 
+                    }));
+                });
+                $("#selectArea").prop("disabled", false);
+                return false;
+            },
+            error:function(xhr, status, error){
 
-  function test() {
-      console.log($("#the-form").serialize()+"&tipo=baja");
-  }
-  function crearTramite() {
-    console.log($("#the-form").serialize());
-    $.ajax({
+                console.log(xhr.responseText);
+                var err = '';
+                $.each(JSON.parse(xhr.responseText) , function(i, item) {
 
-     url:"/api/Tramite/",
-     type:"post",
-     data:$("#the-form").serialize()+"&tipo=transferencia",
-     success:function(res){
+                    err +='<li>'+item.msg+'</li>';
+                });
+                $(".err-area").html(err);
+                return false;
+            }
+          });
+          
+      });
 
-         window.location.reload();
-         return false;
-     },
-     error:function(xhr, status, error){
-         console.log(xhr.responseText);
-         var err = '';
-         $.each(JSON.parse(xhr.responseText) , function(i, item) {
 
-              err +='<li>'+item.msg+'</li>';
-         });
-         $(".err-area").html(err);
-         return false;
-     }
+      $('#selectArea').on('change', function() {
+        console.log($(this).val());
+        getBienes("area",$(this).val());
+      });
 
-    });
-  }
+      $('#form_numeroCS').hide();
+      $('#getInfo').hide();
 
-</script>
-</body>
+      $('#getInfo').on('click',function(){
+        if($('#label_numContr').is(":visible")){
+          console.log($('#numero').val());
+          getBienes("numeroContraloria", $('#numero').val())
+        }else {
+          getBienes("numeroSerie", $('#numero').val())
+        }
+      });
+
+      $("input[name='optionsRadios']:radio").change(function(){
+        console.log($(this).val())
+        if($(this).val() == "Número de contraloria"){
+          $('#form_busquedaArea').hide();
+          $('#form_numeroCS').show();
+          $('#label_numContr').show();
+          $('#label_numSerie').hide();
+          $('#getInfo').show();
+        }else if($(this).val() == "Número de serie"){
+          $('#form_numeroCS').show();
+          $('#form_busquedaArea').hide();
+          $('#label_numContr').hide();
+          $('#label_numSerie').show();
+          $('#getInfo').show();
+        }else{
+          $('#form_numeroCS').hide();
+          $('#form_busquedaArea').show();
+          $('#getInfo').hide();
+        }
+        
+      });
+
+    </script>
+    
+    <script src="bower_components/gentelella/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+    
+    <script src="bower_components/gentelella/vendors/fastclick/lib/fastclick.js"></script>
+    <script src="bower_components/gentelella/vendors/nprogress/nprogress.js"></script>
+    <script src="bower_components/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+    <script src="bower_components/gentelella/vendors/iCheck/icheck.min.js"></script>
+    <script src="bower_components/gentelella/production/js/moment/moment.min.js"></script>
+    <script src="bower_components/gentelella/production/js/datepicker/daterangepicker.js"></script>
+    <script src="bower_components/gentelella/vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
+    <script src="bower_components/gentelella/vendors/google-code-prettify/src/prettify.js"></script>
+    <script src="bower_components/gentelella/vendors/jquery.tagsinput/src/jquery.tagsinput.js"></script>
+    <script src="bower_components/gentelella/vendors/select2/dist/js/select2.full.min.js"></script>
+    <script src="bower_components/gentelella/vendors/parsleyjs/dist/parsley.min.js"></script>
+    <script src="bower_components/gentelella/vendors/autosize/dist/autosize.min.js"></script>
+    <script src="bower_components/gentelella/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
+    <script src="bower_components/gentelella/vendors/starrr/dist/starrr.js"></script>
+    <script src="bower_components/gentelella/build/js/custom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="web_underscore.js"></script>
+
+
+  </body>
 </html>

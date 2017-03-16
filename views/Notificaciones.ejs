@@ -1,59 +1,317 @@
+
 <!DOCTYPE html>
-<html>
-    <head>
-        <title><%=title%></title>
-        <script type="text/javascript" src="/../public/js/jquery-1.10.2.min.js"></script>
-        <link rel="stylesheet" href="/../public/css/style.css">
-    </head>
-<body>
-<div class="page-data">
-</div>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<div class="data-table">
-    <table border="1" cellpadding="7" cellspacing="7">
-        <% if(data.length){ %>
-          <tr>
-              <th width="50px">#</th>
-              <th>Tipo</th>
-              <th>Mensaje</th>
-              <th>Destinatario</th>
-              <th>Estado</th>
-              <th>Fecha Creacion</th>
-          </tr>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-         <% for(var i = 0;i < data.length;i++) { %>
+    <title><%=title%></title>
 
-        <tr>
-            <td><%=(i+1)%></td>
-            <td><%=data[i].tipo%></td>
-            <td><%=data[i].mensaje%></td>
-            <td><%=data[i].destinatario%></td>
-            <td><%=data[i].estado%></td>
-            <td><%=data[i].fecha_creacion%></td>
-            <td>
-                <!--<a class="a-inside edit" href="/api/bien/<%=data[i].id_tramite%>">Edit</a>
+    <!-- Bootstrap -->
+    <link href="bower_components/gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="bower_components/gentelella/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- iCheck -->
+    <link href="bower_components/gentelella/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+    <!-- bootstrap-wysiwyg -->
+    <link href="bower_components/gentelella/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
+    <!-- Select2 -->
+    <link href="bower_components/gentelella/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
+    <!-- Switchery -->
+    <link href="bower_components/gentelella/vendors/switchery/dist/switchery.min.css" rel="stylesheet">
+    <!-- starrr -->
+    <link href="bower_components/gentelella/vendors/starrr/dist/starrr.css" rel="stylesheet">
 
-                <a class="a-inside delete" href="javascript:void(0)" onClick="deleteUser(<%=data[i].user_id%>)">Delete</a>-->
+    <!-- Custom Theme Style -->
+    <link href="bower_components/gentelella/build/css/custom.min.css" rel="stylesheet">
+  </head>
 
-            </td>
-        </tr>
-    <% }
+  <body class="nav-md">
+    <div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+              <a href="#" class="site_title"><i class="fa fa-calculator"></i> <span>SIIA</span></a>
+            </div>
 
-     }else{ %>
-         <!--<tr>
-            <td colspan="5">No Data</td>
-         </tr>-->
-    <% } %>
+            <div class="clearfix"></div>
+            <br/>
 
-    </table>
-</div>
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+              <div class="menu_section">
+                <ul class="nav side-menu">
+                  <li><a href="/"><i class="fa fa-home"></i> Inicio</a></li>
+                  <li><a href="/bajas"><i class="fa fa-arrow-down"></i> Baja</a></li>
+                  <li><a href="/Transferencias"><i class="fa fa-long-arrow-right"></i> Transferencia</a></li>
+                  <li><a href="/donaciones"><i class="fa fa-birthday-cake"></i> Donacion</a></li>
+                  <li><a href="/peticiones"><i class="fa fa-long-arrow-left"></i> Petición</a></li>
+                </ul>
+              </div>
+            </div>
 
-<div class="page-data">
-     <ul class="err-area"></ul>
-</div>
+          </div>
+        </div>
 
-<script>
+        <!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav class="" role="navigation">
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
 
-</script>
-</body>
+              <ul class="nav navbar-nav navbar-right">
+                <li class="">
+                  <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    <%=user%> <!-- AQUI VA QUE USUARIO ESTA MANDADO POR EJS -->
+                    <span class=" fa fa-angle-down"></span>
+                  </a>
+                  <ul class="dropdown-menu dropdown-usermenu pull-right">
+                    <li><a href="/login"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión </a></li>
+                  </ul>
+                </li>
+
+                <li role="presentation" class="dropdown">
+                  <a href="/notificaciones" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                    <i class="fa fa-envelope-o"></i>
+                    <span class="badge bg-green">*</span>
+                  </a>
+
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3><%=title%></h3>
+              </div>
+
+            </div>
+
+            <div class="row">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                  <div class="x_title">
+                  <div class="x_content">
+
+                    <div class="table-responsive">
+                      <table id="tablaNotif" class="table table-striped jambo_table">
+                        <thead>
+                          <tr class="headings">
+                            <th class="column-title"># </th>
+                            <% if(tipoUsuario!=1){%>
+                            <th class="column-title">Bienes</th>
+                            <%}%>
+                            <% if(tipoUsuario==1){%>
+                            <th class="column-title">Clave del Trámite</th>
+                            <%}%>
+                            <th class="column-title">Tipo del Trámite</th>
+                            <th class="column-title">Motivo</th>
+                            <th class="column-title">Fecha de creación</th>
+                            <th class="column-title">Emisor</th>
+                            <% if(tipoUsuario==1){%>
+                            <th class="column-title">Acción</th>
+                            <%}%>
+                            </th>
+                          </tr>
+                        </thead>
+
+                        <!-- se va a llenar con un reload y lo que se agarre del backend, los bienes -->
+
+                        <tbody>
+
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            Universidad de Sonora
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+
+    </div>
+
+    <script src="bower_components/gentelella/vendors/jquery/dist/jquery.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/fastclick/lib/fastclick.js"></script>
+
+    <script src="bower_components/gentelella/vendors/nprogress/nprogress.js"></script>
+
+    <script src="bower_components/gentelella/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/iCheck/icheck.min.js"></script>
+
+    <script src="bower_components/gentelella/production/js/moment/moment.min.js"></script>
+    <script src="bower_components/gentelella/production/js/datepicker/daterangepicker.js"></script>
+
+    <script src="bower_components/gentelella/vendors/bootstrap-wysiwyg/js/bootstrap-wysiwyg.min.js"></script>
+    <script src="bower_components/gentelella/vendors/jquery.hotkeys/jquery.hotkeys.js"></script>
+    <script src="bower_components/gentelella/vendors/google-code-prettify/src/prettify.js"></script>
+
+    <script src="bower_components/gentelella/vendors/jquery.tagsinput/src/jquery.tagsinput.js"></script>
+
+    <script src="bower_components/gentelella/vendors/switchery/dist/switchery.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/select2/dist/js/select2.full.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/parsleyjs/dist/parsley.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/autosize/dist/autosize.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
+
+    <script src="bower_components/gentelella/vendors/starrr/dist/starrr.js"></script>
+
+
+    <script src="bower_components/gentelella/build/js/custom.min.js"></script>
+
+    <script>
+
+      $.ajax({
+        url:"/api/notificaciones/",
+        type:"get",
+        data:"",
+        success:function(res){
+            console.log("asdas")
+            //window.location.reload();
+            $("#notificaciones").empty();
+            $('#tablaNotif tbody').empty();
+            for (var i = 0; i < res.data.length; i++) {
+              console.log(res.data)
+              if(res.data[i].destinatario == 2) $('#tablaNotif tbody').append("<tr><td class='id_notificacion'>" + res.data[i].id_notificacion + "</td><td class='id_bien'> "+res.data[i].bien+" </td><td class='tipo'>" + res.data[i].tipo + "</td><td class='motivo'>" + res.data[i].mensaje + "</td><td class='fecha_creacion'>" + res.data[i].fecha_creacion.slice(0,10) +  "</td><td class='emisor'>" + res.data[i].emisor + "</td></tr>");
+              else $('#tablaNotif tbody').append("<tr><td class='id_notificacion'>" + res.data[i].id_notificacion + "</td><td class='id_tramite'>" + res.data[i].id_tramite + "</td><td class='mensaje'>" + res.data[i].tipo + "</td><td class='motivo'>" + res.data[i].motivo + "</td><td class='fecha_creacion'>" + res.data[i].fecha_creacion.slice(0,10) + "</td><td class='emisor'>" + res.data[i].emisor + "</td><td><input type='button' value = 'Aprobar' onclick='Aprobar("+res.data[i].id_notificacion+","+res.data[i].id_tramite+")' class='btn btn-primary'> <input type='button' value = 'Rechazar' onclick='Rechazar("+res.data[i].id_notificacion+","+res.data[i].id_tramite+")' class='btn btn-primary'></td></tr>");
+            }
+            return false;
+        },
+        error:function(xhr, status, error){
+
+            console.log(xhr.responseText);
+            var err = '';
+            $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                 err +='<li>'+item.msg+'</li>';
+            });
+            $(".err-area").html(err);
+            return false;
+        }
+      });
+
+      function actualizarBien(tramite) {
+        $.ajax({
+          url:"/api/bien/:"+tramite,
+          type:"put",
+          data:"id_tramite="+tramite,
+          success: function(res) {
+            console.log(res);
+          },
+          error:function(xhr, status, error){
+
+            console.log(xhr.responseText);
+            var err = '';
+            $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+              err +='<li>'+item.msg+'</li>';
+            });
+            $(".err-area").html(err);
+            return false;
+          }
+        });
+      }
+
+      function eliminarNotificacion(notificacion) {
+        $.ajax({
+          url:"/api/notificacion/:"+notificacion,
+          type:"delete",
+          data:"id_notificacion="+notificacion,
+          success: function(res) {
+            window.location.reload();
+          },
+          error:function(xhr, status, error){
+
+            console.log(xhr.responseText);
+            var err = '';
+            $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+              err +='<li>'+item.msg+'</li>';
+            });
+            $(".err-area").html(err);
+            return false;
+          }
+        });
+      }
+      function Aprobar(notificacion,tramite) {
+        console.log("L258",tramite);
+        $.ajax({
+          url:"/api/tramite/:"+tramite,
+          type:"put",
+          data:"estado=Aprobado&id_tramite"+tramite,
+          success: function(res) {
+            console.log(res);
+            actualizarBien(tramite);
+            eliminarNotificacion(notificacion)
+          },
+          error:function(xhr, status, error){
+
+              console.log(xhr.responseText);
+              var err = '';
+              $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                   err +='<li>'+item.msg+'</li>';
+              });
+              $(".err-area").html(err);
+              return false;
+          }
+        });
+
+      }
+
+
+
+        function Rechazar(notificacion,tramite) {
+          $.ajax({
+            url:"/api/tramite/:"+tramite,
+            type:"put",
+            data:"estado=Rechazado&id_tramite"+tramite,
+            success: function(res) {
+              eliminarNotificacion(notificacion)
+            },
+            error:function(xhr, status, error){
+
+                console.log(xhr.responseText);
+                var err = '';
+                $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                     err +='<li>'+item.msg+'</li>';
+                });
+                $(".err-area").html(err);
+                return false;
+            }
+          }) ;
+      }
+    </script>
+  </body>
 </html>

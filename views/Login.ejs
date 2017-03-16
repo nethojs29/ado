@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title><%=title%> </title>
+
+
+    <link href="bower_components/gentelella/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="bower_components/gentelella/vendors/jquery/dist/jquery.min.js"></script>
+    <link href="bower_components/gentelella/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="https://colorlib.com/polygon/gentelella/css/animate.min.css" rel="stylesheet">
+
+
+    <link href="bower_components/gentelella/build/css/custom.min.css" rel="stylesheet">
+  </head>
+
+  <body class="login">
+    <div>
+      <a class="hiddenanchor" id="signup"></a>
+      <a class="hiddenanchor" id="signin"></a>
+
+      <div class="login_wrapper">
+        <div class="animate form login_form">
+          <section class="login_content">
+            <form>
+              <h1><i class="fa fa-calculator"></i> SIIA</h1>
+              <div>
+                <input type="text" id="user" class="form-control" placeholder="Usuario" required="" />
+              </div>
+              <div>
+                <input type="password" id="pass" class="form-control" placeholder="Contraseña" required="" />
+              </div>
+              <div>
+                <a class="btn btn-primary submit" onclick="iniciarSesion()">Ingresar</a>
+              </div>
+
+              <div class="clearfix"></div>
+
+              <div class="separator">
+
+
+                <div class="clearfix"></div>
+                <br />
+
+                <div>
+                  <h1>Universidad de Sonora</h1>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </body>
+
+  <script>
+
+
+    function iniciarSesion() {
+      $.ajax({
+        url:"/api/login/",
+        type:"post",
+        data:"usuario="+jQuery('#user').val()+"&pass="+jQuery('#pass').val(),
+        success:function(res){
+            //window.location.reload();
+            console.log(res);
+            if(res) window.location.href = "/";
+            else alert('Usuario o contraseña incorrecta')
+            //jQuery('#user').val('');
+            jQuery('#pass').val('');
+            //window.location.href = "/";
+            //console.log(res);
+        },
+        error:function(xhr, status, error){
+
+            console.log(xhr.responseText);
+            var err = '';
+            $.each(JSON.parse(xhr.responseText) , function(i, item) {
+
+                 err +='<li>'+item.msg+'</li>';
+            });
+            $(".err-area").html(err);
+            return false;
+        }
+      });
+    }
+  </script>
+</html>
